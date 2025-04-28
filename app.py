@@ -48,25 +48,51 @@ def hill_climbing(coord):
                 break
     return ruta, dist_actual
 
-@app.route('/', methods=['GET', 'POST'])
+# Rutas y coordenadas iniciales
+COORDENADAS = {
+    'Jiloyork': (19.916012, -99.580580),
+    'Toluca': (19.289165, -99.655697),
+    'Atlacomulco': (19.799520, -99.873844),
+    'Guadalajara': (20.677754472859146, -103.34625354877137),
+    'Monterrey': (25.69161110159454, -100.321838480256),
+    'Quintana Roo': (21.163111924844458, -86.80231502121464),
+    'Michoacán': (19.701400113725654, -101.20829680213464),
+    'Aguascalientes': (21.87641043660486, -102.26438663286967),
+    'CDMX': (19.432713075976878, -99.13318344772986),
+    'QRO': (20.59719437542255, -100.38667040246602)
+}
+
+@app.route("/", methods=["GET", "POST"])
 def index():
-    ruta = []
+    origen = ""
+    destino = ""
+    ciudades_seleccionadas = []
     distancia_total = 0
-    if request.method == 'POST':  # Procesar el botón
-        coord = {
-            'Jiloyork': (19.916012, -99.580580),
-            'Toluca': (19.289165, -99.655697),
-            'Atlacomulco': (19.799520, -99.873844),
-            'Guadalajara': (20.677754472859146, -103.34625354877137),
-            'Monterrey': (25.69161110159454, -100.321838480256),
-            'QuintanaRoo': (21.163111924844458, -86.80231502121464),
-            'Michohacan': (19.701400113725654, -101.20829680213464),
-            'Aguascalientes': (21.87641043660486, -102.26438663286967),
-            'CDMX': (19.432713075976878, -99.13318344772986),
-            'QRO': (20.59719437542255, -100.38667040246602)
-        }
-        ruta, distancia_total = hill_climbing(coord)
-    return render_template('index.html', ruta=ruta, distancia_total=distancia_total)
+    ruta = []
+
+    if request.method == "POST":
+        origen = request.form.get("origen")
+        destino = request.form.get("destino")
+        ciudades_seleccionadas = request.form.getlist("ciudades")
+
+        if origen and destino and len(ciudades_seleccionadas) > 0:
+            # Incluir origen y destino en las coordenadas seleccionadas
+            coord = {ciudad: COORDENADAS[ciudad] for ciudad in ciudades_seleccionadas}
+            coord[origen] = COORDENADAS[origen]
+            coord[destino] = COORDENADAS[destino]
+            
+            # Calcular la ruta óptima
+            ruta, distancia_total = hill_climbing(coord)
+
+    return render_template(
+        "index.html",
+        todas_las_ciudades=list(COORDENADAS.keys()),
+        origen=origen,
+        destino=destino,
+        ciudades_seleccionadas=ciudades_seleccionadas,
+        ruta=ruta,
+        distancia_total=distancia_total,
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -11,14 +11,49 @@
     <div class="container">
         <header class="header">
             <h1>TSP con Hill Climbing🚗</h1>
-            
+            <p>Selecciona el origen, destino y ciudades intermedias para calcular la ruta más óptima.</p>
         </header>
         <main>
-            <center>
             <form method="POST" action="/">
-                <button type="submit" class="optimize-button">Optimizar Ruta</button>
+                <div class="input-group">
+                    <label for="origen">Ciudad de Origen</label>
+                    <select name="origen" id="origen" required>
+                        <option value="" disabled selected>Selecciona una ciudad</option>
+                        {% for ciudad in todas_las_ciudades %}
+                        <option value="{{ ciudad }}" {% if ciudad == origen %}selected{% endif %}>
+                            {{ ciudad }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="destino">Ciudad de Destino</label>
+                    <select name="destino" id="destino" required>
+                        <option value="" disabled selected>Selecciona una ciudad</option>
+                        {% for ciudad in todas_las_ciudades %}
+                        <option value="{{ ciudad }}" {% if ciudad == destino %}selected{% endif %}>
+                            {{ ciudad }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="ciudades">Ciudades Intermedias (Opcionales)</label>
+                    <select name="ciudades" id="ciudades" multiple>
+                        {% for ciudad in todas_las_ciudades %}
+                        <option value="{{ ciudad }}" {% if ciudad in ciudades_seleccionadas %}selected{% endif %}>
+                            {{ ciudad }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <p>Usa Ctrl (Windows) o Cmd (Mac) para seleccionar múltiples ciudades.</p>
+                </div>
+
+                <button type="submit" class="optimize-button">Calcular Ruta</button>
             </form>
-            </center>
+
             {% if ruta %}
             <div class="results">
                 <h2>Resultados</h2>
@@ -34,7 +69,7 @@
             {% endif %}
         </main>
         <footer class="footer">
-            <p>Raúl Ciriaco Castillo 3601 ISIC</p>
+            <p>Raúl Ciriaco Castillo 3601 ISIC💻</p>
         </footer>
     </div>
 </body>
